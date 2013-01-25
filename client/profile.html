@@ -1,0 +1,142 @@
+<head>
+  <title>community</title>
+</head>
+
+<body>
+  {{> page}}
+</body>
+<template name="page">
+  <div class="container">
+    <div class="header">
+      <h3>Community</h3>
+      <div style="float: right">
+        {{loginButtons align="right"}}
+      </div>
+
+    </div>
+    {{#if studentId}}
+    {{#if showProfile}}
+      {{> profile}}
+    {{/if}}
+
+    {{#if showGroup}}
+      {{> group}}
+    {{/if}}
+    {{else}}
+      <strong>Please Log In</strong>
+    {{/if}}
+  </div>
+</template>
+
+<template name="profile">
+  
+  <a href="#" class="joinClass button">Join Class</a>
+  {{#if showJoinClass}}
+    {{> joinClass}}
+  {{/if}}
+  
+  <h3>Current classes</h3>
+  <div class="classes-list">
+    {{#each data}}
+    <div class="class-display">
+      {{#with cls}}
+      {{name}}
+      {{/with}}
+      {{#if group}}
+        {{#with group}}
+        Group: {{groupName}}
+        {{/with}}
+        <div style="font-size: 0.5em; color: #aaa">
+          {{#each groupMembers}}
+            <em>{{name}}</em><br/>
+          {{/each}}
+        </div>
+        {{#with group}}
+        <a href="#" class="leaveGroup">Leave Group</a>
+        {{/with}}
+      {{else}}
+      {{#with cls}}
+      <a href="#" class="joinGroup">Join Group</a>
+      {{#if showJoinGroup}}
+        {{> joinGroup}}
+      {{/if}}
+  
+      {{/with}}
+      {{/if}}
+      {{#with cls}}
+      <a href="#" class="leaveClass">Leave Class</a>
+      {{/with}}
+    </div>
+    {{/each}}
+  </div>
+</template>
+
+<template name="group">
+    </div>
+    <div class="center column">
+      <div class="messages">
+      {{#each messages}}
+        <div class="message"><p>{{username}}: {{text}}</p></div>
+      {{/each}}
+      </div>
+      <div class="meetings">
+      {{#each meetings}}
+        <div class="meeting"><p>{{time}}: {{description}}</p></div>
+      {{/each}}
+      </div>
+    </div>
+    <div class="sidebar column">
+      <h3>{{className}}</h3>
+      <h4>{{groupName}}</h4>
+      {{#each members}}
+        <p>{{name}}</p>
+      {{/each}}
+      <h3>Problem sets</h3>
+      {{#each problemSets}}
+        <p>{{name}}</p>
+      {{/each}}
+    </div>
+  </div>
+</template>
+
+<template name="groups">
+  <div class="groups">
+    {{#each groups}}
+      <div class="group">
+        <b>{{name}} ({{class}})</b>
+        <div style="padding-left: 4em; color: #aaa">
+          {{#each members}}
+            <em>{{name}}</em>
+          {{/each}}
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</template>
+
+<template name="joinGroup">
+  <div class="groups">
+  {{#each groups}}
+    <div class="group">
+      <a href="#" class="join">Join</a>
+      {{groupName}}
+    </div>
+  {{else}}
+    There are no groups in existence. This is weird.
+  {{/each}}
+  </div>
+</template>
+
+<template name="joinClass">
+  <div class="classes">
+  {{#each classes}}
+    <div class="class-display">
+      <a href="#" class="join">Join</a>
+      {{name}}
+    </div>
+  {{else}}
+    There are no classes in existence. This is weird.
+  {{/each}}
+  </div>
+</template>
+
