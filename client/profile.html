@@ -29,7 +29,6 @@
 </template>
 
 <template name="profile">
-  
   <a href="#" class="joinClass button">Join Class</a>
   {{#if showJoinClass}}
     {{> joinClass}}
@@ -37,7 +36,8 @@
   <h3>Interests</h3>
   <div class="interests-list">
     {{#each interests}}
-      <input type="checkbox" value="{{name}}" checked="{{selected}}"/>
+      <input type="checkbox" class="interest"
+            value="{{name}}" checked="{{selected}}"/>
     {{/each}}
   <h3>Current classes</h3>
   <div class="classes-list">
@@ -76,7 +76,6 @@
 </template>
 
 <template name="group">
-    </div>
     <div class="center column">
       <div class="messages">
       {{#each messages}}

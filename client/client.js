@@ -133,7 +133,9 @@ Template.profile.events({
       ]},
       { $pull: {studentIds: Session.get("studentId")}}
     );
-  }
+  },
+  'click .interest': function() {
+    
 });
 
 Template.group.className = function() {

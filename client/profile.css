@@ -1,0 +1,30 @@
+body {
+  min-width: 600px;
+}
+
+.container {
+  padding-right: 180px;
+}
+
+.column {
+  position: relative;
+  float: left;
+}
+
+.center {
+  padding: 0px 10px;
+  width: 100%;
+}
+
+.sidebar {
+  padding: 0 10px;
+  width: 180px;
+  margin-right: -220px;
+}
+.footer {
+  clear: both;
+}
+
+.header {
+  width: 100%
+}
