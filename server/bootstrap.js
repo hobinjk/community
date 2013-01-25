@@ -177,11 +177,12 @@ var interests  = [
 
 Meteor.startup(function() {
   if( Classes.find().count() === 0 ) {
+    //inserts classes for 
     var classIds = _.map(classNames, function(n) {
       return Classes.insert({name: n});
     });
     var interestIds = _.map(interests, function(n) {
-      return Classes.insert({name: n});
+      return Interests.insert({name: n});
     });
 
     var ids = _.map( names, function(name) {
@@ -195,7 +196,9 @@ Meteor.startup(function() {
     });
     
     for(var i = 0; i < names.length; i++) {
+      //get a random interest to base the group off of
       var interestId = interestIds[_.random(interestIds.length-1)];
+      //get all students interested in this interest
       var studentIds = Students.find({interestIds: {$in: [interestId]}}, {_id: 1}).fetch();
       //retrieve id value and shuffle the stuff
       studentIds = _.chain(studentIds).pluck("_id").shuffle().value();
@@ -203,7 +206,9 @@ Meteor.startup(function() {
         continue;
       //limit the returned student ids to at most 6
       studentIds = studentIds.slice(0,Math.min(5,studentIds.length));
-
+      //get a random class
+      //because all students are involved in all classes
+      //this can't fail
       var classIdx = _.random(classIds.length-1);
       console.log("classId: "+classIds[classIdx]);
       var groupName = adjs[Math.floor(Math.random()*adjs.length)]
