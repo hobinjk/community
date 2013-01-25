@@ -5,11 +5,12 @@ Students = new Meteor.Collection("students");
 Meteor.subscribe("classes");
 Meteor.subscribe("groups");
 Meteor.subscribe("students");
+Meteor.subscript("interests");
 
 Meteor.startup(function() {
   Session.set("showProfile", true);
   Session.set("showGroup", false);
-  
+
   Meteor.autorun(function() {
     //creates a student for the logged in userid
     //if one doesn't exist already
@@ -84,6 +85,17 @@ Template.profile.data = function() {
     };
   });
   
+};
+
+Template.profile.interests = function() {
+  var interests = Interests.find({_id: {$in: Students.findOne(Session.get("studentId")).interestIds}}).fetch();
+
+  return Interests.find({}).map(function(n) {
+    return {
+        name: n.name,
+        selected: _.contains(interests, n)
+    };
+  });
 };
 
 Template.profile.events({

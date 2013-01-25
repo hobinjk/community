@@ -15,13 +15,13 @@
 
     </div>
     {{#if studentId}}
-    {{#if showProfile}}
-      {{> profile}}
-    {{/if}}
+      {{#if showProfile}}
+        {{> profile}}
+      {{/if}}
 
-    {{#if showGroup}}
-      {{> group}}
-    {{/if}}
+      {{#if showGroup}}
+        {{> group}}
+      {{/if}}
     {{else}}
       <strong>Please Log In</strong>
     {{/if}}
@@ -34,7 +34,11 @@
   {{#if showJoinClass}}
     {{> joinClass}}
   {{/if}}
-  
+  <h3>Interests</h3>
+  <div class="interests-list">
+    {{#each interests}}
+      <input type="checkbox" value="{{name}}" checked="{{selected}}"/>
+    {{/each}}
   <h3>Current classes</h3>
   <div class="classes-list">
     {{#each data}}

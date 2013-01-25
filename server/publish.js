@@ -29,4 +29,11 @@ Meteor.publish("groups", function() {
   return Groups.find();
 });
 
+//Interests = {
+//  name: String
+
+Interests = new Meteor.Collection("interests");
+Meteor.publish("interests", function() {
+  return Interests.find();
+});
 

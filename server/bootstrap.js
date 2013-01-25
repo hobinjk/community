@@ -94,41 +94,130 @@ var ends = [
   "Consortium"
 ];
 
+var interests  = [
+  "Nerf",
+  "LARPing",
+  "Magic: The Gathering",
+  "Ascension",
+  "Dominion",
+  "Settlers of Catan",
+  "Star Trek",
+  "Star Wars",
+  "Lord of the Rings",
+  "Buffy the Vampire Slayer",
+  "Community",
+  "Firefly",
+  "Adventure Time",
+  "Gravity Falls",
+  "Marvel",
+  "DC",
+  "Benedict Cumberbatch",
+  "My Little Pony: Friendship is Magic",
+  "4chan",
+  "reddit",
+  "Hacking",
+  "Tea",
+  "Knitting",
+  "Crochet",
+  "Baking",
+  "Cooking",
+  "Dancing",
+  "Drinking",
+  "Thrift Shop",
+  "Music",
+  "Acting",
+  "Starcraft",
+  "Writing",
+  "League of Legends",
+  "DotA",
+  "Television",
+  "Movies",
+  "Torrenting",
+  "Reading",
+  "Science-fiction",
+  "Rocky Horror Picture Show",
+  "Monty Python",
+  "Loki",
+  "Fantasy",
+  "Mythology",
+  "Basketball",
+  "Soccer",
+  "Football",
+  "Hockey",
+  "Archery",
+  "Pistol",
+  "Rifle",
+  "Sailing",
+  "Battlestar Galactica",
+  "Harry Potter",
+  "Anime",
+  "Manga",
+  "Chocolate",
+  "Meat",
+  "Puzzles",
+  "Naruto",
+  "Dubstep",
+  "Alternative",
+  "Indie",
+  "Rock",
+  "Pop",
+  "Jazz",
+  "Classical",
+  "Baroque",
+  "Death Metal",
+  "Filk",
+  "Metal",
+  "Hair Dyeing",
+  "Scott Pilgrim vs. the World",
+  "Diplomacy",
+  "Debate",
+  "Supernatural",
+  "Tumblr",
+];
+
 Meteor.startup(function() {
   if( Classes.find().count() === 0 ) {
     var classIds = _.map(classNames, function(n) {
       return Classes.insert({name: n});
     });
-    console.log("classIds");
-    console.log(classIds);
+    var interestIds = _.map(interests, function(n) {
+      return Classes.insert({name: n});
+    });
+
     var ids = _.map( names, function(name) {
       return Students.insert({
         'name': name,
-        'classIds': classIds
+        'classIds': classIds,
+        'interestIds': _.filter(interestIds, function(n) {
+            return _.random(0,interestIds.length-1) < 15;
+        })
       });
     });
+    
     for(var i = 0; i < names.length; i++) {
-      var students = [];
-      students.push(Math.floor(Math.random()*ids.length));
-      students.push(Math.floor(Math.random()*ids.length));
-      students.push(Math.floor(Math.random()*ids.length));
-      students.push(Math.floor(Math.random()*ids.length));
-      students.push(Math.floor(Math.random()*ids.length));
-      students = _.uniq( students );
-      
-      var classIdx = Math.floor(Math.random()*classIds.length);
+      var interestId = interestIds[_.random(interestIds.length-1)];
+      var studentIds = Students.find({interestIds: {$in: [interestId]}}, {_id: 1}).fetch();
+      //retrieve id value and shuffle the stuff
+      studentIds = _.chain(studentIds).pluck("_id").shuffle().value();
+      if(studentIds.length < 2) //no one wants a study group with 1 or 0 people
+        continue;
+      //limit the returned student ids to at most 6
+      studentIds = studentIds.slice(0,Math.min(5,studentIds.length));
+
+      var classIdx = _.random(classIds.length-1);
       console.log("classId: "+classIds[classIdx]);
       var groupName = adjs[Math.floor(Math.random()*adjs.length)]
           + " " + mids[Math.floor(Math.random()*mids.length)]
           + " " + ends[Math.floor(Math.random()*ends.length)];
-      var studentIds = _.map( students, function(s) { return ids[s]; } );
+
       Groups.insert({
-      classId: classIds[classIdx], //whatever
-      className: classNames[classIdx],
-      groupName: groupName,
-      studentIds: studentIds,
-      problemSetNames: ["Problem Set 1", "Problem Set 2"]
-    });
+        interestId: interestId,
+        classId: classIds[classIdx], //whatever
+        className: classNames[classIdx],
+        groupName: groupName,
+        studentIds: studentIds,
+        problemSetNames: ["Problem Set 1", "Problem Set 2"]
+      });
     }
     
   }
