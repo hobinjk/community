@@ -36,9 +36,13 @@
   <h3>Interests</h3>
   <div class="interests-list">
     {{#each interests}}
-      <input type="checkbox" class="interest"
-            value="{{name}}" checked="{{selected}}"/>
+      {{#if selected}}
+        <input type="checkbox" class="interest" value="{{name}}" checked="true"/>{{name}}<br/>
+      {{else}}
+        <input type="checkbox" class="interest" value="{{name}}"/>{{name}}<br/>
+      {{/if}}
     {{/each}}
+  </div>
   <h3>Current classes</h3>
   <div class="classes-list">
     {{#each data}}

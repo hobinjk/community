@@ -1,11 +1,12 @@
 Classes = new Meteor.Collection("classes");
 Groups = new Meteor.Collection("groups");
 Students = new Meteor.Collection("students");
+Interests = new Meteor.Collection("interests");
 
 Meteor.subscribe("classes");
 Meteor.subscribe("groups");
 Meteor.subscribe("students");
-Meteor.subscript("interests");
+Meteor.subscribe("interests");
 
 Meteor.startup(function() {
   Session.set("showProfile", true);
@@ -16,8 +17,8 @@ Meteor.startup(function() {
     //if one doesn't exist already
     //this causes each user to be mirrored by a Student object
 
-    if(!Session.get("studentId") && Meteor.user()
-        && Meteor.user().emails) {
+    if( Meteor.user()
+        && Meteor.user().emails ) {
       //get email address from user to use as name
       var email = Meteor.user().emails[0].address;
       console.log("email: "+email);
@@ -25,7 +26,7 @@ Meteor.startup(function() {
           {$and: [{name: email}, {userId: Meteor.userId()}]}
       );
       if(!student) {
-        console.log();
+        console.log("well hello there");
         Session.set("studentId", Students.insert({
           userId: Meteor.userId(),
           name: email,
@@ -89,12 +90,15 @@ Template.profile.data = function() {
 };
 
 Template.profile.interests = function() {
-  var interests = Interests.find({_id: {$in: Students.findOne(Session.get("studentId")).interestIds}}).fetch();
+  var student = Students.findOne(Session.get("studentId"));
+  if(!student) return;
+  var interests = Interests.find({_id: {$in: student.interestIds}}).fetch();
 
   return Interests.find({}).map(function(n) {
     return {
+        _id: n._id,
         name: n.name,
-        selected: _.contains(interests, n)
+        selected: _.contains(_.pluck(interests,"_id"), n._id)
     };
   });
 };
@@ -135,6 +139,19 @@ Template.profile.events({
     );
   },
   'click .interest': function() {
+    console.log(this);
+    if(!this.selected) { //remove, it was selected
+      Students.update(
+        Session.get("studentId"),
+        { $addToSet: {interestIds: this._id} }
+      );
+    } else { //add, it wasn't selected and now is
+      Students.update(
+        Session.get("studentId"),
+        { $pull: {interestIds: this._id} }
+      );
+    }
+  }
     
 });
 
