@@ -195,9 +195,34 @@ Template.group.meetings = function() {
 Template.joinGroup.groups = function() {
   var student = Students.findOne(Session.get("studentId"));
   if(!student) return;
-  if(student.interestIds.length > 0)
-  return Groups.find({$and: [{classId: this._id}, {interestId: {$in: student.interestIds}}]});
-  else return Groups.find({classId: this._id});
+  console.log("for realsies");
+  var classId = this._id;
+  if(student.interestIds.length > 0) {
+  var ret = _.map(Groups.find(
+                  {$and: [
+                    {classId: classId},
+                    {interestId: {$in: student.interestIds}}
+                  ]}).fetch(),
+    function(g) {
+      return {
+        groupName: g.groupName,
+        interestName: Interests.findOne(g.interestId).name
+      };
+    }
+  ).concat(
+    Groups.find(
+      {$and: [
+        {classId: classId},
+        {interestId: {$nin: student.interestIds}}]
+      }
+    ).fetch()
+  );
+  console.log("student has interests");
+  console.log(ret);
+  return ret;
+  }
+  else return Groups.find({classId: classId});
+  
 };
 
 Template.joinClass.classes = function() {

@@ -126,7 +126,7 @@
   {{#each groups}}
     <div class="group">
       <a href="#" class="join">Join</a>
-      {{groupName}}
+      {{groupName}} {{#if interestName}} (you share {{interestName}}) {{/if}}
     </div>
   {{else}}
     There are no groups in existence. This is weird.
