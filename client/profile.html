@@ -29,7 +29,7 @@
 </template>
 
 <template name="profile">
-  <a href="#" class="joinClass button">Join Class</a>
+  <a href="#" class="showJoinClass button">Join Class</a>
   {{#if showJoinClass}}
     {{> joinClass}}
   {{/if}}
@@ -64,7 +64,7 @@
         {{/with}}
       {{else}}
       {{#with cls}}
-      <a href="#" class="joinGroup">Join Group</a>
+      <a href="#" class="showJoinGroup">Join Group</a>
       {{#if showJoinGroup}}
         {{> joinGroup}}
       {{/if}}
@@ -125,7 +125,7 @@
   <div class="groups">
   {{#each groups}}
     <div class="group">
-      <a href="#" class="join">Join</a>
+      <a href="#" class="joinGroup">Join</a>
       {{groupName}} {{#if interestName}} (you share {{interestName}}) {{/if}}
     </div>
   {{else}}
@@ -138,7 +138,7 @@
   <div class="classes">
   {{#each classes}}
     <div class="class-display">
-      <a href="#" class="join">Join</a>
+      <a href="#" class="joinClass">Join</a>
       {{name}}
     </div>
   {{else}}

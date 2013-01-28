@@ -109,11 +109,13 @@ Template.profile.events({
     Session.set("showGroup", true);
     Session.set("selectedGroup", this._id);
   },
-  'click .joinGroup': function() {
+  'click .showJoinGroup': function(event) {
     Session.set("showJoinGroup", true);
+    event.preventDefault();
   },
-  'click .joinClass': function() {
+  'click .showJoinClass': function(event) {
     Session.set("showJoinClass", true);
+    event.preventDefault();
   },
   'click .leaveGroup': function() {
     console.log("leaving group");
@@ -122,9 +124,11 @@ Template.profile.events({
       this._id,
       { $pull: {studentIds: Session.get("studentId")} }
     );
+    event.preventDefault();
   },
-  'click .leaveClass': function() {
+  'click .leaveClass': function(event, t) {
     console.log("leaving class");
+
     console.log(this);
     Students.update(
       Session.get("studentId"),
@@ -137,8 +141,9 @@ Template.profile.events({
       ]},
       { $pull: {studentIds: Session.get("studentId")}}
     );
+    event.preventDefault();
   },
-  'click .interest': function() {
+  'click .interest': function(event, t) {
     console.log(this);
     if(!this.selected) { //remove, it was selected
       Students.update(
@@ -151,6 +156,7 @@ Template.profile.events({
         { $pull: {interestIds: this._id} }
       );
     }
+    event.preventDefault();
   }
     
 });
@@ -230,7 +236,7 @@ Template.joinClass.classes = function() {
 };
 
 Template.joinGroup.events({
-  'click .join': function(event, template) {
+  'click .joinGroup': function(event, template) {
     console.log(this);
     console.log("oh and trying to join thing with id: "+this._id);
     Groups.update(
@@ -238,17 +244,20 @@ Template.joinGroup.events({
       { $addToSet: {studentIds: Session.get("studentId")} }
     );
     Session.set("showJoinGroup", false);
+    event.preventDefault();
+    
     return false;
   }
 });
 
 Template.joinClass.events({
-  'click .join': function(event, template) {
+  'click .joinClass': function(event, template) {
     Students.update(
       Session.get("studentId"),
       { $addToSet: {classIds: this._id} }
     );
     Session.set("showJoinClass", false);
+    event.preventDefault();
     return false;
   }
 });
