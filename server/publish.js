@@ -31,9 +31,23 @@ Meteor.publish("groups", function() {
 
 //Interests = {
 //  name: String
-
 Interests = new Meteor.Collection("interests");
 Meteor.publish("interests", function() {
   return Interests.find();
 });
 
+//Meetings = {
+//  date: Date,
+//  description: String
+Meetings=  new Meteor.Collection("meetings");
+Meteor.publish("meetings", function() {
+  return Meetings.find();
+});
+
+//Messages = {
+//  username: String,
+//  text: String
+Messages = new Meteor.Collection("messages");
+Meteor.publish("messages", function() {
+  return Messages.find();
+});

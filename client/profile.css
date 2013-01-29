@@ -3,7 +3,7 @@ body {
 }
 
 .container {
-  padding-right: 180px;
+  padding-right: 230px;
 }
 
 .column {
@@ -18,8 +18,8 @@ body {
 
 .sidebar {
   padding: 0 10px;
-  width: 180px;
-  margin-right: -220px;
+  width: 230px;
+  margin-right: -270px;
 }
 .footer {
   clear: both;

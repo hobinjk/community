@@ -175,6 +175,13 @@ var interests  = [
   "Tumblr",
 ];
 
+var messageTexts = [
+  "Hello world!",
+  "Hey world!",
+  "Lorem ipsum",
+  "Dolor sit amet!",
+];
+
 Meteor.startup(function() {
   if( Classes.find().count() === 0 ) {
     //inserts classes for 
@@ -199,9 +206,9 @@ Meteor.startup(function() {
       //get a random interest to base the group off of
       var interestId = interestIds[_.random(interestIds.length-1)];
       //get all students interested in this interest
-      var studentIds = Students.find({interestIds: {$in: [interestId]}}, {_id: 1}).fetch();
+      var students = Students.find({interestIds: {$in: [interestId]}}, {_id: 1}).fetch();
       //retrieve id value and shuffle the stuff
-      studentIds = _.chain(studentIds).pluck("_id").shuffle().value();
+      studentIds = _.chain(students).pluck("_id").shuffle().value();
       if(studentIds.length < 2) //no one wants a study group with 1 or 0 people
         continue;
       //limit the returned student ids to at most 6
@@ -215,13 +222,28 @@ Meteor.startup(function() {
           + " " + mids[Math.floor(Math.random()*mids.length)]
           + " " + ends[Math.floor(Math.random()*ends.length)];
 
+      var messageIds = new Array(2);
+      for(var j = 0; j < 2; j++)
+        messageIds[j] = Messages.insert({
+          username: students[_.random(students.length-1)].name,
+          text: messageTexts[_.random(messageTexts.length-1)]
+        });
+
+      var meetingIds = new Array(4);
+      for(var j = 0; j < 4; j++)
+        meetingIds[j] = Meetings.insert({
+          date: new Date(new Date().getTime() + 1000*60*60*24*(1+j)),
+          description: "Meeting "+j
+        });
+      
       Groups.insert({
         interestId: interestId,
         classId: classIds[classIdx], //whatever
         className: classNames[classIdx],
+        messageIds: messageIds,
+        meetingIds: meetingIds,
         groupName: groupName,
         studentIds: studentIds,
-        problemSetNames: ["Problem Set 1", "Problem Set 2"]
       });
     }
     

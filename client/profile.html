@@ -60,6 +60,7 @@
           {{/each}}
         </div>
         {{#with group}}
+        <a href="#" class="showGroup">Show Group Page</a>
         <a href="#" class="leaveGroup">Leave Group</a>
         {{/with}}
       {{else}}
@@ -81,25 +82,26 @@
 
 <template name="group">
     <div class="center column">
+      
       <div class="messages">
+      <h3>Messages</h3>
       {{#each messages}}
         <div class="message"><p>{{username}}: {{text}}</p></div>
       {{/each}}
       </div>
       <div class="meetings">
+      <h3>Meetings</h3>
       {{#each meetings}}
-        <div class="meeting"><p>{{time}}: {{description}}</p></div>
+        <div class="meeting"><p>{{dateString}}: {{description}}</p></div>
       {{/each}}
+      <div class="meeting"><a href="#" class="addMeeting">Add Meeting</a></div>
+      
       </div>
     </div>
     <div class="sidebar column">
       <h3>{{className}}</h3>
       <h4>{{groupName}}</h4>
       {{#each members}}
-        <p>{{name}}</p>
-      {{/each}}
-      <h3>Problem sets</h3>
-      {{#each problemSets}}
         <p>{{name}}</p>
       {{/each}}
     </div>

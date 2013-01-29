@@ -2,11 +2,15 @@ Classes = new Meteor.Collection("classes");
 Groups = new Meteor.Collection("groups");
 Students = new Meteor.Collection("students");
 Interests = new Meteor.Collection("interests");
+Messages = new Meteor.Collection("messages");
+Meetings = new Meteor.Collection("meetings");
 
 Meteor.subscribe("classes");
 Meteor.subscribe("groups");
 Meteor.subscribe("students");
 Meteor.subscribe("interests");
+Meteor.subscribe("messages");
+Meteor.subscribe("meetings");
 
 Meteor.startup(function() {
   Session.set("showProfile", true);
@@ -104,7 +108,7 @@ Template.profile.interests = function() {
 };
 
 Template.profile.events({
-  'click .group': function() {
+  'click .showGroup': function() {
     Session.set("showProfile", false);
     Session.set("showGroup", true);
     Session.set("selectedGroup", this._id);
@@ -158,50 +162,54 @@ Template.profile.events({
     }
     event.preventDefault();
   }
-    
 });
 
-Template.group.className = function() {
-  var group = Groups.findOne(Session.get("selectedGroup"));
-  return group.className;
-};
 
 Template.group.groupName = function() {
   var group = Groups.findOne(Session.get("selectedGroup"));
+  if(!group) return;
   return group.groupName;
 };
 
 Template.group.members = function() {
   var group = Groups.findOne(Session.get("selectedGroup"));
   if(!group) return;
-  return Meteor.students.find(
+  return Students.find(
     {_id: {$in: group.studentIds}}
   );
 };
 
-Template.group.problemSets = function() {
+Template.group.messages = function() {
   var group = Groups.findOne(Session.get("selectedGroup"));
   if(!group) return;
-  return group.problemSetNames;
-};
-
-Template.group.messages = function() {
-  //bluh
   return Messages.find(
     {_id: {$in: group.messageIds}}
   );
 };
 
 Template.group.meetings = function() {
-  return Meetings.find(
-    {_id: {$in: group.meetingIds}}
-  );
+  var group = Groups.findOne(Session.get("selectedGroup"));
+  if(!group) return;
+  if(!group.meetingIds) return;
+  return _.map(Meetings.find(
+    {$and : [  
+        {_id: {$in: group.meetingIds}},
+        {date: {$gte: new Date()}}
+     ]},
+    {sort: {date: -1}}).fetch(), function(m) {
+      var d = new Date(m.date);
+      return {
+        _id: m._id,
+        date: d,
+        dateString: (d.getMonth()+1)+"/"+d.getDate()+" "+d.getHours()+":"+d.getMinutes(),
+        description: m.description
+      };
+    });
 };
 
 Template.joinGroup.groups = function() {
   var student = Students.findOne(Session.get("studentId"));
   if(!student) return;
-  console.log("for realsies");
   var classId = this._id;
   if(student.interestIds.length > 0) {
   var ret = _.map(Groups.find(
@@ -223,8 +231,6 @@ Template.joinGroup.groups = function() {
       }
     ).fetch()
   );
-  console.log("student has interests");
-  console.log(ret);
   return ret;
   }
   else return Groups.find({classId: classId});
@@ -245,7 +251,6 @@ Template.joinGroup.events({
     );
     Session.set("showJoinGroup", false);
     event.preventDefault();
-    
     return false;
   }
 });
@@ -261,4 +266,5 @@ Template.joinClass.events({
     return false;
   }
 });
+
 
