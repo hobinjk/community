@@ -7,7 +7,14 @@ Meetings = new Meteor.Collection("meetings");
 
 Meteor.subscribe("classes");
 Meteor.subscribe("groups");
-Meteor.subscribe("students");
+Meteor.autosubscribe(function() {
+  //var gs = Groups.find({
+  //  _id: {$in: [Session.get("studentId")]}
+  //}).fetch();
+  //console.log("gs: "+gs.length);
+  //Meteor.subscribe("students", Session.get("studentId"), Meteor.user(), gs);
+  Meteor.subscribe("students");
+});
 Meteor.subscribe("interests");
 Meteor.subscribe("messages");
 Meteor.subscribe("meetings");
@@ -51,12 +58,13 @@ function getStudent() {
   if(Meteor.user() && Meteor.user().emails) {
     var email = Meteor.user().emails[0].address;
     stud = Students.findOne(
-        {$and: [{name: email}, {userId: Meteor.userId()}]}
+      {$and: [{name: email}, {userId: Meteor.userId()}]}
     );
     if(stud) {
       Session.set("studentId", stud._id);
       return stud;
     }
+    console.log("unable to find any students, oops");
     stud = Students.insert({
       userId: Meteor.userId(),
       name: email,
@@ -251,7 +259,9 @@ Template.joinGroup.groups = function() {
     function(g) {
       return {
         groupName: g.groupName,
-        interestName: Interests.findOne(g.interestId).name
+        interestName: Interests.findOne(g.interestId).name,
+        _id: g._id,
+        studentIds: g.studentIds
       };
     }
   ).concat(
