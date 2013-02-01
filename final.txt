@@ -1,0 +1,5 @@
+community-6470.meteor.com
+1. Built on Meteor
+2. Used Jquery-UI's datepicker widget for picking meeting dates.
+3. Developed for Firefox
+

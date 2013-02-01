@@ -17,11 +17,8 @@ Meteor.startup(function() {
   Session.set("showGroup", false);
 
   Meteor.autorun(function() {
-    //creates a student for the logged in userid
-    //if one doesn't exist already
-    //this causes each user to be mirrored by a Student object
-
-    if( Meteor.user()
+    getStudent();
+    /*if( Meteor.user()
         && Meteor.user().emails ) {
       //get email address from user to use as name
       var email = Meteor.user().emails[0].address;
@@ -40,13 +37,39 @@ Meteor.startup(function() {
       } else {
         Session.set("studentId", student._id);
       }
-    }
-    if( !Meteor.user() ) {
-      Session.set("studentId", null);
-    }
+    }*/
+    
   });
 });
-Template.page.studentId = function() {
+
+function getStudent() {
+  //hu blooh hooh hooh
+  if(Session.get("studentId")) {
+    var stud = Students.findOne(Session.get("studentId"))
+    if(stud) return stud;
+  }
+  if(Meteor.user() && Meteor.user().emails) {
+    var email = Meteor.user().emails[0].address;
+    stud = Students.findOne(
+        {$and: [{name: email}, {userId: Meteor.userId()}]}
+    );
+    if(stud) {
+      Session.set("studentId", stud._id);
+      return stud;
+    }
+    stud = Students.insert({
+      userId: Meteor.userId(),
+      name: email,
+      classIds: [],
+      interestIds: []
+    });
+    Session.set("studentId", stud._id);
+    return stud;
+  }
+  return;
+}
+
+Template.page.studentExists = function() {
   return Session.get("studentId");
 };
 
@@ -66,7 +89,7 @@ Template.profile.showJoinClass = function() {
 };
 
 Template.profile.data = function() {
-  var student = Students.findOne(Session.get("studentId"));
+  var student = getStudent();
   if(!student) return;
   
   var classes = Classes.find(
@@ -93,12 +116,13 @@ Template.profile.data = function() {
   
 };
 
-Template.profile.interests = function() {
-  var student = Students.findOne(Session.get("studentId"));
+Template.profile.interests = function(column, totalColumns) {
+  var student = getStudent();
   if(!student) return;
   var interests = Interests.find({_id: {$in: student.interestIds}}).fetch();
-
-  return Interests.find({}).map(function(n) {
+  var count = Interests.find().count();
+  var start = column*count/totalColumns;
+  return Interests.find({},{skip:start,limit:count/totalColumns}).map(function(n) {
     return {
         _id: n._id,
         name: n.name,
@@ -112,6 +136,7 @@ Template.profile.events({
     Session.set("showProfile", false);
     Session.set("showGroup", true);
     Session.set("selectedGroup", this._id);
+    Session.set("showAddMeeting", false); //stupid
   },
   'click .showJoinGroup': function(event) {
     Session.set("showJoinGroup", true);
@@ -171,6 +196,12 @@ Template.group.groupName = function() {
   return group.groupName;
 };
 
+Template.group.className = function() {
+  var group = Groups.findOne(Session.get("selectedGroup"));
+  if(!group) return;
+  return group.className;
+};
+
 Template.group.members = function() {
   var group = Groups.findOne(Session.get("selectedGroup"));
   if(!group) return;
@@ -208,7 +239,7 @@ Template.group.meetings = function() {
 };
 
 Template.joinGroup.groups = function() {
-  var student = Students.findOne(Session.get("studentId"));
+  var student = getStudent();
   if(!student) return;
   var classId = this._id;
   if(student.interestIds.length > 0) {
@@ -266,5 +297,67 @@ Template.joinClass.events({
     return false;
   }
 });
+
+Template.group.showAddMeeting = function() {
+  return Session.get("showAddMeeting");
+};
+
+Template.group.events({
+  'click .showAddMeeting': function(evt, template) {
+    Session.set("showAddMeeting", true);
+    console.log("showAddMeeting");
+    evt.preventDefault();
+    return false;
+  },
+  'keydown #messageInput': function(evt, t) {
+    if (evt.type === "keydown" && evt.which === 13) {
+      var id = Messages.insert({
+        username: Students.findOne(Session.get("studentId")).name,
+        text: evt.target.value
+      });
+      Groups.update(
+        Session.get("selectedGroup"),
+        { $addToSet: { messageIds: id } }
+      );
+      evt.target.value = "";
+      evt.preventDefault();
+    
+    }
+  },
+  'click .showProfile': function(e,t) {
+    Session.set("showProfile", true);
+    Session.set("showGroup", false);
+  }
+});
+
+Template.addMeeting.events({
+  'click .addMeeting': function(evt, tmpl) {
+    var date = $("#datepicker").datepicker("getDate");
+    var desc = tmpl.find("#meetingDescription").value;
+    var hour = parseInt($("#hour").val(), 10);
+    var minute = parseInt($("#minute").val(), 10);
+    date.setHours(hour);
+    date.setMinutes(minute);
+    console.log("START");
+    console.log(date);
+    console.log(desc);
+    var id = Meetings.insert({
+      'date': date,
+      'description': desc
+    });
+    console.log(id);
+    Groups.update(
+      Session.get("selectedGroup"),
+      { $addToSet: {meetingIds: id} }
+    );
+    Session.set("showAddMeeting", false);
+    evt.preventDefault();
+    return false;
+  }
+});
+
+Template.addMeeting.rendered = function() {
+  $("#datepicker").datepicker();
+};
 
 

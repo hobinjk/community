@@ -7,5 +7,5 @@ insecure
 preserve-inputs
 accounts-base
 accounts-password
-accounts-ui
 less
+accounts-ui

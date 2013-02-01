@@ -1,30 +1,66 @@
-body {
-  min-width: 600px;
+
+
+div.container {
+  margin-left:auto;
+  margin-right:auto;
+  padding:10px;
+  width:800px;
+  height: 100%;
+  background-color:white;
 }
 
-.container {
-  padding-right: 230px;
-}
+ 
+div.header {
+  padding-bottom: 10px;
+  border-radius: 10px;
+  width:100%;
+} 
 
-.column {
-  position: relative;
+div.interests-list, div.members-list {
+  padding:10px;
   float: left;
+  border-radius:10px;
+  background-color:#eecfee;
+  margin-left: -220px;
+  width: 220px;
 }
 
-.center {
-  padding: 0px 10px;
+
+div.profile-container, div.group-container {
   width: 100%;
 }
 
-.sidebar {
-  padding: 0 10px;
-  width: 230px;
-  margin-right: -270px;
-}
-.footer {
-  clear: both;
+div.classes-list, div.group-main {
+  border-radius:10px;
+  background-color:#eecfee;
+  padding: 20px;
+  float: left;
+  width: 515px;
+  color:black;
+  margin-right: 225px;
 }
 
-.header {
-  width: 100%
+A:link {color: DarkOrchid; text-decoration:none}
+A:visited {color: DarkOrchid; text-decoration:none}
+A:hover {text-decoration:underline; opacity: 0.6; }
+
+
+div.login{
+  padding:20px;
+  color: #aaa;
+  border-radius:10px;
+  background-color:#eecfee;
+}
+
+p {
+  text-indent:20px;
+}
+
+body{
+  font-family: 'Roboto Condensed', sans-serif;}
+
+div.groupMemberList {
+  font-size: 0.7em;
+  color: black;
+  padding-left: 10px;
 }

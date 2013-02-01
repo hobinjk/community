@@ -1,20 +1,25 @@
 <head>
   <title>community</title>
+ <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />
+  <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:400,400italic' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
   {{> page}}
 </body>
+
 <template name="page">
   <div class="container">
     <div class="header">
-      <h3>Community</h3>
-      <div style="float: right">
+      <h2 style="display: inline">COMMUNITY</h2>
+      <div style="float: right; opacity: 1;">
         {{loginButtons align="right"}}
       </div>
 
     </div>
-    {{#if studentId}}
+    {{#if studentExists}}
       {{#if showProfile}}
         {{> profile}}
       {{/if}}
@@ -23,28 +28,18 @@
         {{> group}}
       {{/if}}
     {{else}}
-      <strong>Please Log In</strong>
+      <div class="login">
+      <h4>Please Log In</h4>
+      <p>Welcome to Community, a webapp that helps students form the perfect study group for you! Once you sign up, you can add a class and select your interests. Based on those interests, Community will put you in a study group full of like minded peers. That way, the ice is already broken for you. Let us help you make new study partners, and possibly new friends!</p>
+      </div>
     {{/if}}
   </div>
 </template>
 
 <template name="profile">
-  <a href="#" class="showJoinClass button">Join Class</a>
-  {{#if showJoinClass}}
-    {{> joinClass}}
-  {{/if}}
-  <h3>Interests</h3>
-  <div class="interests-list">
-    {{#each interests}}
-      {{#if selected}}
-        <input type="checkbox" class="interest" value="{{name}}" checked="true"/>{{name}}<br/>
-      {{else}}
-        <input type="checkbox" class="interest" value="{{name}}"/>{{name}}<br/>
-      {{/if}}
-    {{/each}}
-  </div>
-  <h3>Current classes</h3>
+  <div class="profile-container">
   <div class="classes-list">
+  <h3>Current classes</h3> 
     {{#each data}}
     <div class="class-display">
       {{#with cls}}
@@ -54,7 +49,7 @@
         {{#with group}}
         Group: {{groupName}}
         {{/with}}
-        <div style="font-size: 0.5em; color: #aaa">
+        <div class="groupMemberList">
           {{#each groupMembers}}
             <em>{{name}}</em><br/>
           {{/each}}
@@ -77,33 +72,55 @@
       {{/with}}
     </div>
     {{/each}}
-  </div>
+    <div class="class-display">
+      <a href="#" class="showJoinClass button">Join Class</a>
+      {{#if showJoinClass}}
+        {{> joinClass}}
+      {{/if}}
+    </div>
+  </div> <!-- classes-list -->
+  <div class="interests-list">
+  <h3>Interests</h3>
+    {{#each interests}}
+      {{#if selected}}
+        <input type="checkbox" class="interest" checked="true"/>{{name}}<br/>
+      {{else}}
+        <input type="checkbox" class="interest"/>{{name}}<br/>
+      {{/if}}
+    {{/each}}
+  </div> <!-- /interests-list -->
+  <div style="clear: both;"></div>
+  </div> <!-- profile-container -->
 </template>
 
 <template name="group">
-    <div class="center column">
-      
+  <div class="group-wrapper">
+    <div class="group-main">
       <div class="messages">
-      <h3>Messages</h3>
-      {{#each messages}}
-        <div class="message"><p>{{username}}: {{text}}</p></div>
-      {{/each}}
+        <h3>Messages</h3>
+        {{#each messages}}
+          <div class="message"><p>{{username}}: {{text}}</p></div>
+        {{/each}}
+          <div class="message"><input type="text" id="messageInput"/></div>
       </div>
       <div class="meetings">
-      <h3>Meetings</h3>
-      {{#each meetings}}
-        <div class="meeting"><p>{{dateString}}: {{description}}</p></div>
-      {{/each}}
-      <div class="meeting"><a href="#" class="addMeeting">Add Meeting</a></div>
-      
+        <h3>Meetings</h3>
+        {{#each meetings}}
+          <div class="meeting"><p>{{dateString}}: {{description}}</p></div>
+        {{/each}}
+        {{#if showAddMeeting}}
+          {{> addMeeting}}
+        {{else}}
+          <div class="meeting"><a href="#" class="showAddMeeting">Add Meeting</a></div>
+        {{/if}}
       </div>
-    </div>
-    <div class="sidebar column">
-      <h3>{{className}}</h3>
-      <h4>{{groupName}}</h4>
+    </div> <!-- /group-main -->
+    <div class="members-list">
+      <h4>{{groupName}} ({{className}})</h4>
       {{#each members}}
         <p>{{name}}</p>
       {{/each}}
+      <a href="#" class="showProfile">Back to Profile</a>
     </div>
   </div>
 </template>
@@ -147,5 +164,40 @@
     There are no classes in existence. This is weird.
   {{/each}}
   </div>
+</template>
+
+<template name="addMeeting">
+  <input type="text" id="datepicker" size="10"/>
+  <select id="hour">
+    <option>00</option>
+    <option>01</option>
+    <option>02</option>
+    <option>03</option>
+    <option>04</option>
+    <option>05</option>
+    <option>06</option>
+    <option>07</option>
+    <option>08</option>
+    <option>09</option>
+    <option>10</option>
+    <option>11</option>
+    <option>12</option>
+    <option>13</option>
+    <option>14</option>
+    <option>15</option>
+    <option>16</option>
+    <option>17</option>
+    <option>18</option>
+    <option>19</option>
+    <option>20</option>
+    <option>21</option>
+    <option>22</option>
+    <option>23</option>
+  </select>:<select id="minute">
+    <option>00</option>
+    <option>15</option>
+    <option>30</option>
+    <option>45</option>
+  </select>: <input type="text" id="meetingDescription"/><input type="button" class="addMeeting" value="Add Meeting"/>
 </template>
 
