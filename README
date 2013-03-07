@@ -1,3 +1,4 @@
 Community
-
+=========
+Web app for MIT's 6.470 competition built using Meteor.
 "meteor run" will run the server if Meteor is installed
